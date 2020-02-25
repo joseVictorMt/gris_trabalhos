@@ -1,4 +1,8 @@
-# Desafio 1 de criptografia
+# ==========================================================
+# Author: José Victor Medeiros Thomé da Silva
+# Date: 24/02/2020
+# Description: Desafio 1 de criptografia do PS GRIS 2020.1.
+# ==========================================================
 
 class Base_64:
     ''' Representa um tratador de mensagens na base 64. '''
@@ -44,9 +48,11 @@ class Base_64:
         return base_64_msg
 
 
-base_64_converter = Base_64()
+base_64 = Base_64()
 
-#print(base_64_converter.hexa_conversor('49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d'))
 message = input("Entre com um valor em hexadecimal: ")
-print(base_64_converter.hexa_conversor(message))
+print(base_64.hexa_conversor(message))
+
+#default_input = '49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d'
+#print(base_64.hexa_conversor(default_input))
 
