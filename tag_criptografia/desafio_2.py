@@ -1,7 +1,7 @@
 # ==========================================================
 # Author: José Victor Medeiros Thomé da Silva
-# Date: 24/02/2020
-# Description: Desafio 1 de criptografia do PS GRIS 2020.1.
+# Date: 25/02/2020
+# Description: Desafio 2 de criptografia do PS GRIS 2020.1.
 # ==========================================================
 
 def fixed_xor(buff_1, buff_2):
