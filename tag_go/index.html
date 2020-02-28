@@ -8,5 +8,6 @@
 	<body>
         <p>Scanner do José Victor</p>
         <p>Escaneando {{.IP}} de {{.From}} até {{.To}}.</p>
+        <ul>{{range $a := .Log}}<li>{{$a}}</li>{{end}}</ul>
 	</body>
 </html>

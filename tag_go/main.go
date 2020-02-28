@@ -18,12 +18,12 @@ func scan(host string, port int, wg *sync.WaitGroup, data chan string) error {
     conn, err := net.Dial("tcp", address)
 
     if err != nil {
-        data <- fmt.Sprintf("%s\tPorta %d: fechada", time.Now().Format("01/02/2006 15:04:05"), port)
+        data <- fmt.Sprintf("%s\t\tPorta %d: fechada", time.Now().Format("01/02/2006 15:04:05"), port)
         return err
     }
 
     conn.Close()
-    data <- fmt.Sprintf("%s\tPorta %d: aberta", time.Now().Format("01/02/2006 15:04:05"), port)
+    data <- fmt.Sprintf("%s\t\tPorta %d: aberta", time.Now().Format("01/02/2006 15:04:05"), port)
     return nil
 }
 
@@ -47,13 +47,9 @@ func getDataScan(host string, from int, to int) []string {
 func index(w http.ResponseWriter, req *http.Request) {
 
     ip := req.FormValue("ip")
-    from, err_1 := strconv.Atoi(req.FormValue("from"))
-    to, err_2 := strconv.Atoi(req.FormValue("to"))
-    if err_1 != nil {
-        fmt.Println("O parâmetro da porta limite 'from' deve ser inteiro.")
-    } else if err_2 != nil {
-        fmt.Println("O parâmetro da porta limite 'to' deve ser inteiro.")
-    }
+    from, _ := strconv.Atoi(req.FormValue("from"))
+    to, _ := strconv.Atoi(req.FormValue("to"))
+
     data_log := getDataScan(ip, from, to)
 
     for i := 0; i < len(data_log); i++ {
@@ -61,11 +57,12 @@ func index(w http.ResponseWriter, req *http.Request) {
     }
 
 	tp1, _ := template.ParseFiles("index.html")
-	data := map[string] string {
+	data := map[string] interface{} {
 		"Title" :   "Primeira página em go XD",
         "IP"    :   ip,
         "From"  :   req.FormValue("from"),
         "To"    :   req.FormValue("to"),
+        "Log"   :   data_log,
 	}
 	w.WriteHeader(http.StatusOK)
 	tp1.Execute(w, data)
