@@ -68,9 +68,10 @@ func index(w http.ResponseWriter, req *http.Request) {
 	tp1.Execute(w, data)
 }
 
+// O código recebe parâmetros da URL com as variáveis ip, from e to, como no exemplo abaixo:
+// http://localhost:8080/?ip=127.0.0.1&from=8070&to=8090
 func main() {
 	http.HandleFunc("/", index)
 	fmt.Println("Servidor rodando na porta 8080.")
 	log.Fatal(http.ListenAndServe(":8080", nil))
-    // http://localhost:8080/?ip=127.0.0.1&from=8070&to=8090
 }
