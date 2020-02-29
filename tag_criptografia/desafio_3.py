@@ -3,83 +3,74 @@
 # Date: 25/02/2020
 # Description: Desafio 3 de criptografia do PS GRIS 2020.1.
 # ==========================================================
-import re  # Biblioteca de expressões regulares do python.
-from collections import Counter # Dicionário contador.
-from math import sqrt
 
+# Tabela de frequência de aparições das letras do idioma Inglês de 'a' a 'z' e ' '.
+# A tabela foi toda extraida da página https://en.wikipedia.org/wiki/Letter_frequency
+# exceto pelo caractere ' ' no qual foi colocada maior frequência por ser conveniente.
 ENGLISH_FREQUENCY_TABLE = {
-    'a' : 0.8167,
-    'b' : 0.1492,
-    'c' : 0.2202,
-    'd' : 0.4253,
-    'e' : 1.2702,
-    'f' : 0.2228,
-    'g' : 0.2015,
-    'h' : 0.6094,
-    'i' : 0.6966,
-    'j' : 0.0153,
-    'k' : 0.1292,
-    'l' : 0.4025,
-    'm' : 0.2406,
-    'n' : 0.6749,
-    'o' : 0.7507,
-    'p' : 0.1929,
-    'q' : 0.0095,
-    'r' : 0.5987,
-    's' : 0.6327,
-    't' : 0.9356,
-    'u' : 0.2758,
-    'v' : 0.0978,
-    'w' : 0.2560,
-    'x' : 0.0150,
-    'y' : 0.1994,
-    'z' : 0.0077
+    'a': 0.08167, 'b': 0.01492, 'c': 0.02782, 'd': 0.04253,
+    'e': 0.12702, 'f': 0.02228, 'g': 0.02015, 'h': 0.06094,
+    'i': 0.06094, 'j': 0.00153, 'k': 0.00772, 'l': 0.04025,
+    'm': 0.02406, 'n': 0.06749, 'o': 0.07507, 'p': 0.01929,
+    'q': 0.00095, 'r': 0.05987, 's': 0.06327, 't': 0.09056,
+    'u': 0.02758, 'v': 0.00978, 'w': 0.02360, 'x': 0.00150,
+    'y': 0.01974, 'z': 0.00074, ' ': 0.16000
 }
 
 def xor_decrypt_msg(key, hex_msg):
     '''Decripta a mensagem passada pela cifra XOR usando a chave passada.'''
 
-    # Converte a mensagem para o formato ascii e a chave para seu valor unicode.
-    msg = bytearray.fromhex(hex_msg).decode('ascii')
-    key = ord(key)
+    msg = bytes.fromhex(hex_msg) # Converte de hexadecimal para string bytes ascii.
+    decrypted = b''
 
-    # Cada letra da mensagem é convertida para o valor unicode antes de decriptar.
-    decrypted = ''.join([chr(ord(letter) ^ key) for letter in msg])
-    # Retorna a mensagem decriptada e sem caracteres de controle.
-    return re.sub(r'[\x00-\x1f\x7f-\x9f]', '', decrypted)
+    # Realiza XOR em cada uma das letras da mensagem encriptada.
+    for letter in msg:
+        decrypted += bytes([letter ^ key])
 
-def decrypt_score(string):
+    return decrypted
+
+def decrypt_score(decrypted):
     '''Calcula a taxa de pontuação da string decriptada com uma frase em inglês.'''
 
-    char_counter = Counter(string.lower())
-    string_size = len(string)
-    score = 0
-    for letter, quant in char_counter.items():
-        score += sqrt(ENGLISH_FREQUENCY_TABLE.get(letter, 0) * quant/string_size)
+    return sum([ENGLISH_FREQUENCY_TABLE.get(chr(letter), 0) for letter in decrypted.lower()])
 
-    return score
-
-def detect_key(encrypted_hex):
-    '''Procura a chave de decriptação desejada para a string.'''
+def bigger_key_score(first_key, last_key, encrypted_hex):
+    '''Calcula e avalia qual chave dentro do intervalo [first_key, last_key] tem
+       maior taxa de pontuação.'''
 
     bigger = -1
     winner = None
-    for key in range(ord('a'), ord('z') + 1):
-        score = decrypt_score(xor_decrypt_msg(chr(key), encrypted_hex))
+    winner_decr = ''
+
+    for key in range(first_key, last_key + 1):
+        msg = xor_decrypt_msg(key, encrypted_hex)
+        score = decrypt_score(msg)
         if(bigger < score):
-            winner = chr(key)
             bigger = score
-
-    for key in range(ord('A'), ord('Z') + 1):
-        score = decrypt_score(xor_decrypt_msg(chr(key), encrypted_hex))
-        if(bigger < score):
             winner = chr(key)
-            bigger = score
+            winner_decr = msg
 
-    return winner
+    return bigger, winner, winner_decr
 
+def detect_key(encrypted_hex):
+    '''Procura a chave que decripta a string encriptada em hexadecimal pela cifra de XOR.
+       A dedução é feita pela soma das frequências das letras em ENGLISH_FREQUENCY_TABLE.'''
 
-encrypted = '1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736'
-detected_key = detect_key(encrypted)
-print(detected_key)
-print(xor_decrypt_msg(detected_key, encrypted))
+    # Verifica pelas letras minúsculas de 'a' a 'z'.
+    l_score, l_winner, l_winner_decr = bigger_key_score(ord('a'), ord('z'), encrypted_hex)
+    # Verifica pelas letras maiúsculas de 'A' a 'Z'
+    u_score, u_winner, u_winner_decr = bigger_key_score(ord('A'), ord('Z'), encrypted_hex)
+
+    if(u_score > l_score):
+        return u_winner, u_winner_decr.decode("utf-8")
+
+    return l_winner, l_winner_decr.decode("utf-8")
+
+def main():
+    encrypted = '1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736'
+    detected_key, message = detect_key(encrypted)
+    print("Chave detectada:      ", detected_key)
+    print("Mensagem descriptada: ", message)
+
+if __name__ == "__main__":
+    main()

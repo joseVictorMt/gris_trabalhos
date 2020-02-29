@@ -28,7 +28,7 @@ class Base_64:
         self.char_table = upper_case_letters + lower_case_letters + from_0_to_9 + last_ones
 
 
-    def hexa_conversor(self, message):
+    def hexa_converter(self, message):
         ''' Converte a mensagem passada para a base 64. '''
 
         # Converte a mensagem passada como parâmetro para o formato binário.
@@ -50,9 +50,15 @@ class Base_64:
 
 base_64 = Base_64()
 
-message = input("Entre com um valor em hexadecimal: ")
-print(base_64.hexa_conversor(message))
+def main():
+    '''Operações que só devem ser realizadas sob execução direta de desafio_1.py'''
 
-#default_input = '49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d'
-#print(base_64.hexa_conversor(default_input))
+    message = input("Entre com um valor em hexadecimal: ")
+    print(base_64.hexa_converter(message))
+
+    #default_input = '49276d206b696c6c696e6720796f757220627261696e206c696b65206120706f69736f6e6f7573206d757368726f6f6d'
+    #print(base_64.hexa_converter(default_input))
+
+if __name__ == "__main__":
+    main()
 
