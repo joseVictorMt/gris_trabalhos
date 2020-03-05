@@ -18,7 +18,7 @@ ENGLISH_FREQUENCY_TABLE = {
 }
 
 def xor_decrypt_msg(key, hex_msg):
-    '''Decripta a mensagem passada pela cifra XOR usando a chave passada.'''
+    '''Decripta a mensagem passada (em hexadecimal) pela cifra XOR usando a chave passada.'''
 
     msg = bytes.fromhex(hex_msg) # Converte de hexadecimal para string bytes ascii.
     decrypted = b''
